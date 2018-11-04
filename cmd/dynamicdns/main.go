@@ -8,8 +8,6 @@ import (
 	"github.com/t0k4rt/dynamic-dns/internal/ipaddressprovider/livebox"
 )
 
-// 1xWDwzc9IZEm8ic01YKFZT7c
-
 func main() {
 
 	forever := make(chan bool)
@@ -57,7 +55,7 @@ func main() {
 // 	return resp.Payload.Result.Data
 // }
 
-// func UpdateIP(newIP string) {
+// func UpdateIP(newIP string) {git
 // 	fmt.Println("updating IP", newIP)
 // 	// create the API client
 // 	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Api-Key", "header", "1xWDwzc9IZEm8ic01YKFZT7c")
