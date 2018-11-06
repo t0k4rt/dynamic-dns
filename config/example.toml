@@ -1,8 +1,8 @@
-[[general]]
+[general]
 # refresh rate, default 1h
 default_refresh_delay = "1h"
 default_ttl = 300
-# restrict_ip_versions = ["v4", "v6"]
+#ip_versions = []
 
 
 [[domain]]
@@ -16,5 +16,5 @@ dns_updater = "domain1 dns provider"
 name="domain2.fr"
 ip_provider = "ip provider"
 dns_updater = "domain2 dns provider"
-# ttl =
+ttl=3000
 # refresh_delay = 
