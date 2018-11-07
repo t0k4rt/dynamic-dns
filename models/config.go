@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"net/url"
+	"time"
+)
 
 type TomlConfig struct {
 	General general
@@ -42,7 +45,7 @@ func newGeneral() general {
 // # ttl =
 // # refresh_delay =
 type domain struct {
-	Name         string
+	Name         urll
 	IPProvider   string `toml:"ip_provider"`
 	DNSUpdater   string `toml:"dns_updater"`
 	TTL          int
@@ -53,8 +56,18 @@ type duration struct {
 	time.Duration
 }
 
+type urll struct {
+	*url.URL
+}
+
 func (d *duration) UnmarshalText(text []byte) error {
 	var err error
 	d.Duration, err = time.ParseDuration(string(text))
+	return err
+}
+
+func (u *urll) UnmarshalText(text []byte) error {
+	var err error
+	u.URL, err = url.Parse(string(text))
 	return err
 }

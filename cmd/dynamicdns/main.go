@@ -8,9 +8,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/spf13/cobra"
 	"github.com/t0k4rt/dynamic-dns/internal/dnsupdater"
-	"github.com/t0k4rt/dynamic-dns/internal/dnsupdater/gandi"
 	"github.com/t0k4rt/dynamic-dns/internal/ipaddressprovider"
-	"github.com/t0k4rt/dynamic-dns/internal/ipaddressprovider/livebox"
 	"github.com/t0k4rt/dynamic-dns/models"
 )
 
@@ -25,12 +23,11 @@ func main() {
 	}
 	log.Println(config.General)
 	log.Println(config.Domain)
-
 	forever := make(chan bool)
 
-	liveboxProvider := livebox.NewProvider()
+	liveboxProvider := ipaddressprovider.Make("livebox")
+	gandiUpdater, err := dnsupdater.Make("gandi")
 
-	gandiUpdater, err := gandi.NewUpdater("toktok.fr")
 	if err != nil {
 		log.Fatalln(err)
 	}

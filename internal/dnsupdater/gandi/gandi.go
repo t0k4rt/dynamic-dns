@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/go-openapi/runtime"
-
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/t0k4rt/dynamic-dns/internal/ipaddressprovider"
 	gandiApi "github.com/t0k4rt/gandi-livedns-go/client"
@@ -16,17 +15,11 @@ import (
 )
 
 type gandiDNSUpdater struct {
-	domain      string
 	gandiClient *gandiApi.GandiLiveDNS
 	gandiAuth   runtime.ClientAuthInfoWriter
 }
 
-func NewUpdater(domain string) (*gandiDNSUpdater, error) {
-	// validate url
-	_, err := url.Parse(domain)
-	if err != nil {
-		return nil, err
-	}
+func NewUpdater() (*gandiDNSUpdater, error) {
 	// check api key presence
 	apiKey, ok := os.LookupEnv("GANDI_KEY")
 	if !ok {
@@ -34,14 +27,13 @@ func NewUpdater(domain string) (*gandiDNSUpdater, error) {
 	}
 
 	return &gandiDNSUpdater{
-		domain:      domain,
 		gandiClient: gandiApi.Default,
 		gandiAuth:   httptransport.APIKeyAuth("X-Api-Key", "header", apiKey),
 	}, nil
 }
 
-func (l *gandiDNSUpdater) UpdateDNS(ip *ipaddressprovider.ProvidedIP) error {
-	err := l.update(ip)
+func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipaddressprovider.ProvidedIP) error {
+	err := l.update(domain, ip)
 	if err != nil {
 		return err
 	}
@@ -59,11 +51,11 @@ func (l *gandiDNSUpdater) UpdateDNS(ip *ipaddressprovider.ProvidedIP) error {
 	return nil
 }
 
-func (l *gandiDNSUpdater) update(ip *ipaddressprovider.ProvidedIP) error {
+func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipaddressprovider.ProvidedIP) error {
 
 	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameParams()
 	domainRecords.SetRecordName("@")
-	domainRecords.SetDomain(l.domain)
+	domainRecords.SetDomain(domain.HostName())
 	var records []*models.Record
 
 	if ip.GetIPV4() != nil {
@@ -91,24 +83,17 @@ func (l *gandiDNSUpdater) update(ip *ipaddressprovider.ProvidedIP) error {
 	_, err := l.gandiClient.Domains.PutDomainsDomainRecordsRecordName(domainRecords, l.gandiAuth)
 	if err != nil {
 		return err
-		// switch e := err.(type) {
-		// case *domains.PutDomainsDomainRecordsRecordNameBadRequest:
-		// 	fmt.Printf("plop %v \n", e.Payload.Status)
-		// case *domains.PutDomainsDomainRecordsRecordNameDefault:
-		// 	fmt.Printf("plop %v \n", e.Payload.Message)
-		// }
-		// log.Fatal(err)
 	}
 	return nil
 }
 
-func (l *gandiDNSUpdater) verifyIPV4(ip net.IP) error {
+func (l *gandiDNSUpdater) verifyIPV4(domain *url.URL, ip net.IP) error {
 	if ip == nil {
 		return nil
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(l.domain)
+	p.SetDomain(domain.HostName())
 	p.SetRecordName("@")
 	p.SetRecordType("A")
 
@@ -123,13 +108,13 @@ func (l *gandiDNSUpdater) verifyIPV4(ip net.IP) error {
 	return nil
 }
 
-func (l *gandiDNSUpdater) verifyIPV6(ip net.IP) error {
+func (l *gandiDNSUpdater) verifyIPV6(domain *url.URL, ip net.IP) error {
 	if ip == nil {
 		return nil
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(l.domain)
+	p.SetDomain(domain.HostName())
 	p.SetRecordName("@")
 	p.SetRecordType("AAAA")
 

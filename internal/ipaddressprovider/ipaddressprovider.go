@@ -1,10 +1,24 @@
 package ipaddressprovider
 
-import "net"
+import (
+	"net"
+
+	"github.com/t0k4rt/dynamic-dns/internal/ipaddressprovider/livebox"
+)
 
 type IPProvider interface {
 	GetIP() (*ProvidedIP, error)
 }
+
+func Make(s string) IPProvider, err {
+	switch s {
+	case "livebox":
+		return livebox.NewProvider()
+	default:
+		return nil, errors.New("Unknown IPProvider")
+	}
+}
+
 
 type ProvidedIP struct {
 	ipv4 net.IP
