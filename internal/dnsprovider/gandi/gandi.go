@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/t0k4rt/dynamic-dns/internal/ipaddressprovider"
+	"github.com/t0k4rt/dynamic-dns/internal/ipprovider"
 	gandiApi "github.com/t0k4rt/gandi-livedns-go/client"
 	"github.com/t0k4rt/gandi-livedns-go/client/domains"
 	"github.com/t0k4rt/gandi-livedns-go/models"
@@ -19,7 +19,7 @@ type gandiDNSUpdater struct {
 	gandiAuth   runtime.ClientAuthInfoWriter
 }
 
-func NewUpdater() (*gandiDNSUpdater, error) {
+func NewDNSProvider() (*gandiDNSUpdater, error) {
 	// check api key presence
 	apiKey, ok := os.LookupEnv("GANDI_KEY")
 	if !ok {
@@ -32,18 +32,18 @@ func NewUpdater() (*gandiDNSUpdater, error) {
 	}, nil
 }
 
-func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipaddressprovider.ProvidedIP) error {
+func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP) error {
 	err := l.update(domain, ip)
 	if err != nil {
 		return err
 	}
 
-	err = l.verifyIPV4(ip.GetIPV4())
+	err = l.verifyIPV4(domain, ip.GetIPV4())
 	if err != nil {
 		return err
 	}
 
-	err = l.verifyIPV6(ip.GetIPV6())
+	err = l.verifyIPV6(domain, ip.GetIPV6())
 	if err != nil {
 		return err
 	}
@@ -51,11 +51,11 @@ func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipaddressprovider.Provi
 	return nil
 }
 
-func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipaddressprovider.ProvidedIP) error {
+func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP) error {
 
 	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameParams()
 	domainRecords.SetRecordName("@")
-	domainRecords.SetDomain(domain.HostName())
+	domainRecords.SetDomain(domain.Hostname())
 	var records []*models.Record
 
 	if ip.GetIPV4() != nil {
@@ -93,7 +93,7 @@ func (l *gandiDNSUpdater) verifyIPV4(domain *url.URL, ip net.IP) error {
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(domain.HostName())
+	p.SetDomain(domain.Hostname())
 	p.SetRecordName("@")
 	p.SetRecordType("A")
 
@@ -114,7 +114,7 @@ func (l *gandiDNSUpdater) verifyIPV6(domain *url.URL, ip net.IP) error {
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(domain.HostName())
+	p.SetDomain(domain.Hostname())
 	p.SetRecordName("@")
 	p.SetRecordType("AAAA")
 
