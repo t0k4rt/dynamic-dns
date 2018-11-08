@@ -24,10 +24,6 @@ func main() {
 	log.Println(config.Domain)
 	forever := make(chan bool)
 
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	for _, dom := range config.Domain {
 		updater(dom)
 	}
