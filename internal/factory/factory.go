@@ -2,6 +2,7 @@ package factory
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/t0k4rt/dynamic-dns/internal/dnsprovider"
 	"github.com/t0k4rt/dynamic-dns/internal/dnsprovider/gandi"
@@ -14,7 +15,7 @@ func MakeIPProvider(s string) (ipprovider.IPProvider, error) {
 	case "livebox":
 		return livebox.NewIPProvider(), nil
 	default:
-		return nil, errors.New("Unknown IPProvider")
+		return nil, errors.New(fmt.Sprintf("Unknown IPProvider: \"%s\"", s))
 	}
 }
 
@@ -23,6 +24,6 @@ func MakeDNSProvider(s string) (dnsprovider.DNSProvider, error) {
 	case "gandi":
 		return gandi.NewDNSProvider()
 	default:
-		return nil, errors.New("Unknown DNSProvider")
+		return nil, errors.New(fmt.Sprintf("Unknown DNSProvider \"%s\"", s))
 	}
 }

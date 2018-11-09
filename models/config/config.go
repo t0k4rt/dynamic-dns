@@ -50,8 +50,8 @@ func newGeneral() General {
 // # refresh_delay =
 type Domain struct {
 	Name         curl
-	IPProvider   ipprovider.IPProvider   `toml:"ip_provider"`
-	DNSProvider  dnsprovider.DNSProvider `toml:"dns_updater"`
+	IPProvider   cIPProvider  `toml:"ip_provider"`
+	DNSProvider  cDNSProvider `toml:"dns_updater"`
 	TTL          int
 	RefreshDelay duration `toml:"refresh_delay"`
 }
@@ -60,7 +60,9 @@ type Domain struct {
 // 	d, _ := time.ParseDuration("1h")
 // 	return Domain{
 // 		Name:       nil,
-// 		IPProvider: "livebox",
+// 		IPProvider: nil,
+// 		DNSProvider: nil,
+// 		TTL:	300,
 // 		IPVersions: []string{"v4", "v6"},
 // 	}
 // }

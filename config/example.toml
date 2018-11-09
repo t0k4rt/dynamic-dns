@@ -7,14 +7,14 @@ default_ttl = 300
 
 [[domain]]
 name="domain1.fr"
-ip_provider = "ip provider"
-dns_updater = "domain1 dns provider"
+ip_provider = "livebox"
+dns_updater = "gandi"
 # ttl =
 # refresh_delay = 
 
 [[domain]]
 name="domain2.fr"
-ip_provider = "ip provider"
-dns_updater = "domain2 dns provider"
+ip_provider = "livebox"
+dns_updater = "gandi"
 ttl=3000
 # refresh_delay = 

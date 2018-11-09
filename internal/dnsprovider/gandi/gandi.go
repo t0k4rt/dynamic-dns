@@ -32,8 +32,8 @@ func NewDNSProvider() (*gandiDNSUpdater, error) {
 	}, nil
 }
 
-func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP) error {
-	err := l.update(domain, ip)
+func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP, ttl int) error {
+	err := l.update(domain, ip, int32(ttl))
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP) 
 	return nil
 }
 
-func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP) error {
+func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP, ttl int32) error {
 
 	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameParams()
 	domainRecords.SetRecordName("@")
@@ -61,7 +61,7 @@ func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP) err
 	if ip.GetIPV4() != nil {
 		records = append(records, &models.Record{
 			RrsetName:   "@",
-			RrsetTTL:    300,
+			RrsetTTL:    ttl,
 			RrsetType:   "A",
 			RrsetValues: []string{ip.GetIPV4String()},
 		})
@@ -70,7 +70,7 @@ func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP) err
 	if ip.GetIPV6() != nil {
 		records = append(records, &models.Record{
 			RrsetName:   "@",
-			RrsetTTL:    300,
+			RrsetTTL:    ttl,
 			RrsetType:   "AAAA",
 			RrsetValues: []string{ip.GetIPV6String()},
 		})

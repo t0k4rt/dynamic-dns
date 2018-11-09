@@ -7,5 +7,5 @@ import (
 )
 
 type DNSProvider interface {
-	UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP) error
+	UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP, ttl int) error
 }
