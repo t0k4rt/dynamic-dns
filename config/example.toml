@@ -3,7 +3,8 @@
 default_refresh_delay = "1h"
 default_ttl = 300
 #ip_versions = []
-
+log_level = "debug"
+log_path = "./logs.log"
 
 [[domain]]
 name="domain1.fr"

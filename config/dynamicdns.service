@@ -1,0 +1,15 @@
+[Unit]
+Description=Dynamic dns updater daemon
+After=network-online.target
+
+[Service]
+EnvironmentFile=-/etc/dynamicdns/env
+User=dynamicdns
+ExecStart=/usr/local/bin/dynamicdns --config /etc/dynamicdns/config.toml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartForceExitStatus=SIGPIPE
+KillMode=control-group
+ 
+[Install]
+WantedBy=multi-user.target

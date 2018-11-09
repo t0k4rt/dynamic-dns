@@ -2,12 +2,17 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/BurntSushi/toml"
+	kitlog "github.com/go-kit/kit/log"
+	kitlevel "github.com/go-kit/kit/log/level"
 	"github.com/spf13/cobra"
 	"github.com/t0k4rt/dynamic-dns/models/config"
 )
+
+var logger kitlog.Logger
 
 var cmdStart = &cobra.Command{
 	Use:   "start",
@@ -28,6 +33,10 @@ func startCmdRun(cfgFile string) error {
 	if err != nil {
 		return err
 	}
+
+	log.Printf("path %s, level %s\n", cfg.General.LogPath, cfg.General.LogLevel)
+	initLogger(cfg.General.LogPath, cfg.General.LogLevel)
+
 	for _, dom := range cfg.Domain {
 		updater(dom, cfg.General)
 	}
@@ -47,6 +56,32 @@ func loadConfig(path string) (config.TomlConfig, error) {
 	return config, nil
 }
 
+func initLogger(path string, level string) {
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		log.Fatalf("Could not write logs to %s", path)
+	}
+	//defer f.Close()
+
+	logger = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(f))
+
+	switch {
+	case level == "debug":
+		logger = kitlevel.NewFilter(logger, kitlevel.AllowDebug())
+	case level == "info":
+		logger = kitlevel.NewFilter(logger, kitlevel.AllowInfo())
+	case level == "warn":
+		logger = kitlevel.NewFilter(logger, kitlevel.AllowWarn())
+	case level == "error":
+		logger = kitlevel.NewFilter(logger, kitlevel.AllowError())
+	case true:
+		log.Printf("unknown log level %s, default to info", level)
+	default:
+		logger = kitlevel.NewFilter(logger, kitlevel.AllowInfo())
+	}
+	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
+}
+
 func updater(domain config.Domain, general config.General) {
 
 	go func() {
@@ -62,7 +97,7 @@ func updater(domain config.Domain, general config.General) {
 		} else {
 			ttl = general.DefaultTTL
 		}
-		log.Printf("Start updating dns with domain %s, delay %s, ttl %d", domain.Name.String(), refreshDelay, ttl)
+		kitlevel.Info(logger).Log("Event", "start updater", "Domain", domain.Name.String(), "refresh_delay", refreshDelay, "ttl", ttl)
 
 		ticker := time.NewTicker(refreshDelay)
 		for range ticker.C {
@@ -75,7 +110,7 @@ func updater(domain config.Domain, general config.General) {
 			if err != nil {
 				log.Fatalln(err)
 			}
-			log.Println("DNS updated !")
+			kitlevel.Info(logger).Log("Event", "domain updated", "domain", domain.Name.String())
 		}
 	}()
 }
