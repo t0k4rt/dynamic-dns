@@ -25,14 +25,15 @@ func main() {
 	forever := make(chan bool)
 
 	for _, dom := range config.Domain {
-		updater(dom)
+		updater(dom, config.General)
 	}
 	<-forever
 }
 
-func updater(domain config.Domain) {
+func updater(domain config.Domain, general config.General) {
 
 	go func() {
+
 		ticker := time.NewTicker(10 * time.Second)
 		for range ticker.C {
 
