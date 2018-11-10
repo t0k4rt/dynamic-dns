@@ -13,6 +13,7 @@ import (
 )
 
 var logger kitlog.Logger
+var errLogger = log.New(os.Stderr, "", 0)
 
 var cmdStart = &cobra.Command{
 	Use:   "start",
@@ -33,10 +34,8 @@ func startCmdRun(cfgFile string) error {
 	if err != nil {
 		return err
 	}
-
-	log.Printf("path %s, level %s\n", cfg.General.LogPath, cfg.General.LogLevel)
 	initLogger(cfg.General.LogPath, cfg.General.LogLevel)
-
+	kitlevel.Info(logger).Log("Event", "Dynamic dns started")
 	for _, dom := range cfg.Domain {
 		updater(dom, cfg.General)
 	}
@@ -57,14 +56,21 @@ func loadConfig(path string) (config.TomlConfig, error) {
 }
 
 func initLogger(path string, level string) {
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		log.Fatalf("Could not write logs to %s", path)
+	var f *os.File
+	switch {
+	case path == "stdout":
+		f = os.Stdout
+	default:
+		var err error
+		f, err = os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			errLogger.Fatalf("Could not write logs to %s", path)
+		}
 	}
+
 	//defer f.Close()
-
 	logger = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(f))
-
+	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
 	switch {
 	case level == "debug":
 		logger = kitlevel.NewFilter(logger, kitlevel.AllowDebug())
@@ -75,11 +81,11 @@ func initLogger(path string, level string) {
 	case level == "error":
 		logger = kitlevel.NewFilter(logger, kitlevel.AllowError())
 	case true:
-		log.Printf("unknown log level %s, default to info", level)
+		kitlevel.Warn(logger).Log("unknown log level %s, default to info", level)
 	default:
 		logger = kitlevel.NewFilter(logger, kitlevel.AllowInfo())
 	}
-	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
+
 }
 
 func updater(domain config.Domain, general config.General) {
@@ -103,12 +109,12 @@ func updater(domain config.Domain, general config.General) {
 		for range ticker.C {
 			currentIP, err := domain.IPProvider.GetIP()
 			if err != nil {
-				log.Fatalln(err)
+				errLogger.Fatalln(err)
 			}
 
 			err = domain.DNSProvider.UpdateDNS(domain.Name.URL, currentIP, ttl)
 			if err != nil {
-				log.Fatalln(err)
+				errLogger.Fatalln(err)
 			}
 			kitlevel.Info(logger).Log("Event", "domain updated", "domain", domain.Name.String())
 		}

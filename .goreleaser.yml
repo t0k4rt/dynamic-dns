@@ -28,6 +28,7 @@ archive:
   replacements:
     darwin: Darwin
     linux: Linux
+    amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:

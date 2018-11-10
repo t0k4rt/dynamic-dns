@@ -60,17 +60,6 @@ type Domain struct {
 	RefreshDelay duration `toml:"refresh_delay"`
 }
 
-// func newDomain() Domain {
-// 	d, _ := time.ParseDuration("1h")
-// 	return Domain{
-// 		Name:       nil,
-// 		IPProvider: nil,
-// 		DNSProvider: nil,
-// 		TTL:	300,
-// 		IPVersions: []string{"v4", "v6"},
-// 	}
-// }
-
 type duration struct {
 	time.Duration
 }

@@ -1,0 +1,23 @@
+[general]
+# refresh rate, default 1h
+default_refresh_delay = "1h" # format is number s,m,h (seconds, minutes, hours)
+# default ttl in dns
+default_ttl = 300
+# select which type of ip (v4, v6, both)
+# you wish to update
+ip_versions = ["v4", "v6"]
+## logs 
+log_level = "info"
+log_path = "/tmp/dynamicdns.log" # can be file path or stdout"
+
+# [[domain]]
+# name="domain1.com"
+# ip_provider = "livebox"
+# dns_updater = "gandi"
+
+# [[domain]]
+# name="domain2.com"
+# ip_provider = "livebox"
+# dns_updater = "gandi"
+# ttl=3000
+# refresh_delay = 1h
