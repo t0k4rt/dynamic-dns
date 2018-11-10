@@ -4,8 +4,8 @@ After=network-online.target
 
 [Service]
 EnvironmentFile=-/etc/dynamicdns/dynamicdns_env.conf
-User=dynamicdns
-ExecStart=/usr/local/bin/dynamicdns --config /etc/dynamicdns/config.toml
+User=www-data
+ExecStart=/usr/local/bin/dynamic-dns start --config /etc/dynamicdns/dynamicdns.toml
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartForceExitStatus=SIGPIPE
