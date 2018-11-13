@@ -8,7 +8,7 @@ default_ttl = 300
 ip_versions = ["v4", "v6"]
 ## logs 
 log_level = "info"
-log_path = "stdout" # can be file path or stdout"
+log_path = "/var/log/dynamicdns.log" # can be file path or stdout"
 
 # [[domain]]
 # name="domain1.com"
