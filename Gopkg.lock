@@ -45,15 +45,15 @@
   revision = "eeefdecb41b842af6dc652aaea4026e8403e62df"
 
 [[projects]]
-  digest = "1:db2e37856e0f3e8ad322792ca2ede9bcf821f4d482ca0ef300e6a9d85776a99a"
+  digest = "1:ce058ca1b1787a997e578c4344f9650becb5086a3512332cbedffca9950d77a1"
   name = "github.com/go-kit/kit"
   packages = [
     "log",
     "log/level",
   ]
   pruneopts = "UT"
-  revision = "ca4112baa34cb55091301bdc13b1420a122b1b9e"
-  version = "v0.7.0"
+  revision = "12210fb6ace19e0496167bb3e667dcd91fa9f69b"
+  version = "v0.8.0"
 
 [[projects]]
   digest = "1:31a18dae27a29aa074515e43a443abfd2ba6deb6d69309d8d7ce789c45f34659"
@@ -156,14 +156,6 @@
   version = "v0.17.2"
 
 [[projects]]
-  digest = "1:586ea76dbd0374d6fb649a91d70d652b7fe0ccffb8910a77468e7702e7901f3d"
-  name = "github.com/go-stack/stack"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a"
-  version = "v1.8.0"
-
-[[projects]]
   digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
@@ -228,18 +220,18 @@
     "models",
   ]
   pruneopts = "UT"
-  revision = "76b54452730c36a9ca1941e58c35921718d0a720"
+  revision = "15fce414b94a95f4faa6dd472fcd792ab6ceab30"
 
 [[projects]]
   branch = "master"
-  digest = "1:1da5b6f523e3673eeef10f07961bc5f13de65c1d7867e2406632e6cb4e0f0aac"
+  digest = "1:8dad1c5c8ee944816b9e5865e2ac0d66d72c80942e95735f335addaebfea317d"
   name = "github.com/t0k4rt/livebox-go"
   packages = [
     "client",
     "client/ip_address",
   ]
   pruneopts = "UT"
-  revision = "6fefa3d9ec8dc498a32700d24296c8fb6b88261b"
+  revision = "a77904c61e8ef2ec01a6e55b0ef4e7c08e075e92"
 
 [[projects]]
   branch = "master"
@@ -250,7 +242,7 @@
     "idna",
   ]
   pruneopts = "UT"
-  revision = "03003ca0c849e57b6ea29a4bab8d3cb6e4d568fe"
+  revision = "88d92db4c548972d942ac2a3531a8a9a34c82ca6"
 
 [[projects]]
   digest = "1:0c56024909189aee3364b7f21a95a27459f718aa7c199a5c111c36cfffd9eaef"

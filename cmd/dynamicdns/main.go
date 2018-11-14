@@ -59,7 +59,6 @@ func startCmdRun(cfgFile string) error {
 	}
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
-
 	monitorSignal(cancel)
 	initLogger(cfg.General.LogPath, cfg.General.LogLevel)
 	kitlevel.Info(logger).Log("Event", "Dynamic dns started")
@@ -141,11 +140,14 @@ func updater(domain config.Domain, general config.General, ctx context.Context) 
 		case <-ticker.C:
 			currentIP, err := domain.IPProvider.GetIP()
 			if err != nil {
+				kitlevel.Info(logger).Log("Error", "failed to get ip", "error", err.Error())
 				errLogger.Fatalln(err)
 			}
+			kitlevel.Info(logger).Log("Event", "Ip retrieved")
 
 			err = domain.DNSProvider.UpdateDNS(domain.Name.URL, currentIP, ttl)
 			if err != nil {
+				kitlevel.Info(logger).Log("Error", "failed to update dns", "error", err.Error())
 				errLogger.Fatalln(err)
 			}
 			kitlevel.Info(logger).Log("Event", "domain updated", "domain", domain.Name.String())
@@ -157,9 +159,7 @@ func updater(domain config.Domain, general config.General, ctx context.Context) 
 }
 
 func main() {
-
 	done := make(chan bool, 1)
-
 	go func() {
 		if err := rootCmd.Execute(); err != nil {
 			os.Exit(1)
@@ -167,7 +167,5 @@ func main() {
 		wg.Wait()
 		done <- true
 	}()
-
 	<-done
-
 }
