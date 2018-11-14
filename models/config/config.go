@@ -1,7 +1,6 @@
 package config
 
 import (
-	"net/url"
 	"time"
 
 	"github.com/t0k4rt/dynamic-dns/internal/dnsprovider"
@@ -53,7 +52,7 @@ func newGeneral() General {
 // # ttl =
 // # refresh_delay =
 type Domain struct {
-	Name         curl
+	Name         string
 	IPProvider   cIPProvider  `toml:"ip_provider"`
 	DNSProvider  cDNSProvider `toml:"dns_updater"`
 	TTL          int
@@ -67,16 +66,6 @@ type duration struct {
 func (d *duration) UnmarshalText(text []byte) error {
 	var err error
 	d.Duration, err = time.ParseDuration(string(text))
-	return err
-}
-
-type curl struct {
-	*url.URL
-}
-
-func (u *curl) UnmarshalText(text []byte) error {
-	var err error
-	u.URL, err = url.Parse(string(text))
 	return err
 }
 

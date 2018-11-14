@@ -3,7 +3,6 @@ package gandi
 import (
 	"errors"
 	"net"
-	"net/url"
 	"os"
 
 	"github.com/go-openapi/runtime"
@@ -32,7 +31,7 @@ func NewDNSProvider() (*gandiDNSUpdater, error) {
 	}, nil
 }
 
-func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP, ttl int) error {
+func (l *gandiDNSUpdater) UpdateDNS(domain string, ip *ipprovider.ProvidedIP, ttl int) error {
 	err := l.update(domain, ip, int32(ttl))
 	if err != nil {
 		return err
@@ -51,11 +50,11 @@ func (l *gandiDNSUpdater) UpdateDNS(domain *url.URL, ip *ipprovider.ProvidedIP, 
 	return nil
 }
 
-func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP, ttl int32) error {
+func (l *gandiDNSUpdater) update(domain string, ip *ipprovider.ProvidedIP, ttl int32) error {
 
 	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameParams()
 	domainRecords.SetRecordName("@")
-	domainRecords.SetDomain(domain.Hostname())
+	domainRecords.SetDomain(domain)
 	var records []*models.Record
 
 	if ip.GetIPV4() != nil {
@@ -87,13 +86,13 @@ func (l *gandiDNSUpdater) update(domain *url.URL, ip *ipprovider.ProvidedIP, ttl
 	return nil
 }
 
-func (l *gandiDNSUpdater) verifyIPV4(domain *url.URL, ip net.IP) error {
+func (l *gandiDNSUpdater) verifyIPV4(domain string, ip net.IP) error {
 	if ip == nil {
 		return nil
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(domain.Hostname())
+	p.SetDomain(domain)
 	p.SetRecordName("@")
 	p.SetRecordType("A")
 
@@ -108,13 +107,13 @@ func (l *gandiDNSUpdater) verifyIPV4(domain *url.URL, ip net.IP) error {
 	return nil
 }
 
-func (l *gandiDNSUpdater) verifyIPV6(domain *url.URL, ip net.IP) error {
+func (l *gandiDNSUpdater) verifyIPV6(domain string, ip net.IP) error {
 	if ip == nil {
 		return nil
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(domain.Hostname())
+	p.SetDomain(domain)
 	p.SetRecordName("@")
 	p.SetRecordType("AAAA")
 
