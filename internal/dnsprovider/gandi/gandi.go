@@ -52,32 +52,32 @@ func (l *gandiDNSUpdater) UpdateDNS(fullDomain string, ip net.IP, ttl int, versi
 
 func (l *gandiDNSUpdater) update(domain string, recordName string, ip net.IP, ttl int32, version int) error {
 
-	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameParams()
+	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameRecordTypeParams()
 	domainRecords.SetRecordName(recordName)
 	domainRecords.SetDomain(domain)
-	var records []*models.Record
+	var record *models.Record
 	switch {
 	case version == 4:
-		records = append(records, &models.Record{
+		domainRecords.SetRecordType("A")
+		record = &models.Record{
 			RrsetName:   recordName,
 			RrsetTTL:    ttl,
 			RrsetType:   "A",
 			RrsetValues: []string{ip.String()},
-		})
+		}
 	case version == 6:
-		records = append(records, &models.Record{
+		domainRecords.SetRecordType("AAAA")
+		record = &models.Record{
 			RrsetName:   recordName,
 			RrsetTTL:    ttl,
 			RrsetType:   "AAAA",
 			RrsetValues: []string{ip.String()},
-		})
+		}
 	}
 
-	domainRecords.SetRecord(domains.PutDomainsDomainRecordsRecordNameBody{
-		Items: records,
-	})
+	domainRecords.SetRecord(record)
 
-	_, err := l.gandiClient.Domains.PutDomainsDomainRecordsRecordName(domainRecords, l.gandiAuth)
+	_, err := l.gandiClient.Domains.PutDomainsDomainRecordsRecordNameRecordType(domainRecords, l.gandiAuth)
 	if err != nil {
 		return err
 	}

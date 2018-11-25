@@ -56,12 +56,12 @@
   version = "v0.8.0"
 
 [[projects]]
-  digest = "1:31a18dae27a29aa074515e43a443abfd2ba6deb6d69309d8d7ce789c45f34659"
+  digest = "1:4062bc6de62d73e2be342243cf138cf499b34d558876db8d9430e2149388a4d8"
   name = "github.com/go-logfmt/logfmt"
   packages = ["."]
   pruneopts = "UT"
-  revision = "390ab7935ee28ec6b286364bba9b4dd6410cb3d5"
-  version = "v0.3.0"
+  revision = "07c9b44f60d7ffdfb7d8efe1ad539965737836dc"
+  version = "v0.4.0"
 
 [[projects]]
   digest = "1:c49164b7b1e34324258ae61deef2cba7912005ba9cb7a9ee4930fe6bdfec7b5d"
@@ -209,7 +209,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ab62e7dac4a2a0327dda4ad0f62804532d62ca7bfa786258d07ffc4a09554f51"
+  digest = "1:495fcfe047dad65daba345d8e4faeffdf91240be5e881ea3603b0ba9bad829e6"
   name = "github.com/t0k4rt/gandi-livedns-go"
   packages = [
     "client",
@@ -220,7 +220,7 @@
     "models",
   ]
   pruneopts = "UT"
-  revision = "15fce414b94a95f4faa6dd472fcd792ab6ceab30"
+  revision = "6d2ab11967f6a3db6af68a1747470d7440d4a925"
 
 [[projects]]
   branch = "master"
@@ -235,14 +235,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:465a33526e2f67923b633d1ff67999c13a41d5226ee8ae78ddc22bc41c5ec4b3"
+  digest = "1:fa44bfbd6a531dbb03a45ba46765f876abd24579fcf6d1b64b8546b98a00f15b"
   name = "golang.org/x/net"
   packages = [
     "context",
     "idna",
+    "publicsuffix",
   ]
   pruneopts = "UT"
-  revision = "88d92db4c548972d942ac2a3531a8a9a34c82ca6"
+  revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
 
 [[projects]]
   digest = "1:0c56024909189aee3364b7f21a95a27459f718aa7c199a5c111c36cfffd9eaef"
@@ -291,6 +292,7 @@
     "github.com/t0k4rt/gandi-livedns-go/models",
     "github.com/t0k4rt/livebox-go/client",
     "github.com/t0k4rt/livebox-go/client/ip_address",
+    "golang.org/x/net/publicsuffix",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
