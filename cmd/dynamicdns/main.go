@@ -143,6 +143,7 @@ func updater(ctx context.Context, domain config.Domain, general config.General) 
 		} else {
 			ipVersion = domain.IPVersion
 		}
+
 		kitlevel.Info(logger).Log("Event", "start updater", "Domain", domain.Name, "refresh_delay", refreshDelay, "ttl", ttl, "ipversion", ipVersion)
 
 		ticker := time.NewTicker(refreshDelay)
@@ -156,7 +157,7 @@ func updater(ctx context.Context, domain config.Domain, general config.General) 
 				}
 				kitlevel.Info(logger).Log("Event", "Ip retrieved", "ip", currentIP.String())
 
-				err = domain.DNSProvider.UpdateDNS(domain.Name, currentIP, ttl, domain.IPVersion)
+				err = domain.DNSProvider.UpdateDNS(domain.Name, currentIP, ttl, ipVersion)
 				if err != nil {
 					kitlevel.Info(logger).Log("Error", "failed to update dns", "error", err.Error())
 					errLogger.Fatalln(err)
