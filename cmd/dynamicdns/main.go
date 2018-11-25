@@ -61,6 +61,7 @@ func startCmdRun(cfgFile string) error {
 	if err != nil {
 		return err
 	}
+
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	monitorSignal(cancel)
@@ -77,8 +78,6 @@ func startCmdRun(cfgFile string) error {
 			return nil
 		}
 	}
-
-	return nil
 }
 
 func loadConfig(path string) (config.TomlConfig, error) {
@@ -137,25 +136,33 @@ func updater(ctx context.Context, domain config.Domain, general config.General) 
 		} else {
 			ttl = general.DefaultTTL
 		}
-		kitlevel.Info(logger).Log("Event", "start updater", "Domain", domain.Name, "refresh_delay", refreshDelay, "ttl", ttl)
+
+		var ipVersion int
+		if domain.IPVersion == 0 {
+			ipVersion = 4
+		} else {
+			ipVersion = domain.IPVersion
+		}
+		kitlevel.Info(logger).Log("Event", "start updater", "Domain", domain.Name, "refresh_delay", refreshDelay, "ttl", ttl, "ipversion", ipVersion)
 
 		ticker := time.NewTicker(refreshDelay)
 		for {
 			select {
 			case <-ticker.C:
-				currentIP, err := domain.IPProvider.GetIP()
+				currentIP, err := domain.IPProvider.GetIP(ipVersion)
 				if err != nil {
 					kitlevel.Info(logger).Log("Error", "failed to get ip", "error", err.Error())
 					errLogger.Fatalln(err)
 				}
-				kitlevel.Info(logger).Log("Event", "Ip retrieved")
+				kitlevel.Info(logger).Log("Event", "Ip retrieved", "ip", currentIP.String())
 
-				err = domain.DNSProvider.UpdateDNS(domain.Name, currentIP, ttl)
+				err = domain.DNSProvider.UpdateDNS(domain.Name, currentIP, ttl, domain.IPVersion)
 				if err != nil {
 					kitlevel.Info(logger).Log("Error", "failed to update dns", "error", err.Error())
 					errLogger.Fatalln(err)
 				}
 				kitlevel.Info(logger).Log("Event", "domain updated", "domain", domain.Name)
+
 			case <-ctx.Done():
 				kitlevel.Info(logger).Log("Event", "Stopping updater", "Domain", domain.Name, "refresh_delay", refreshDelay, "ttl", ttl)
 				wg.Done()

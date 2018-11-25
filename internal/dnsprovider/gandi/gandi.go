@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/t0k4rt/dynamic-dns/internal/ipprovider"
+	"github.com/t0k4rt/dynamic-dns/pkg/domainparser"
 	gandiApi "github.com/t0k4rt/gandi-livedns-go/client"
 	"github.com/t0k4rt/gandi-livedns-go/client/domains"
 	"github.com/t0k4rt/gandi-livedns-go/models"
@@ -31,18 +31,18 @@ func NewDNSProvider() (*gandiDNSUpdater, error) {
 	}, nil
 }
 
-func (l *gandiDNSUpdater) UpdateDNS(domain string, ip *ipprovider.ProvidedIP, ttl int) error {
-	err := l.update(domain, ip, int32(ttl))
+func (l *gandiDNSUpdater) UpdateDNS(fullDomain string, ip net.IP, ttl int, version int) error {
+	domain, recordName, err := domainparser.ParseDomain(fullDomain)
 	if err != nil {
 		return err
 	}
 
-	err = l.verifyIPV4(domain, ip.GetIPV4())
+	err = l.update(domain, recordName, ip, int32(ttl), version)
 	if err != nil {
 		return err
 	}
 
-	err = l.verifyIPV6(domain, ip.GetIPV6())
+	err = l.verifyIP(domain, recordName, ip, version)
 	if err != nil {
 		return err
 	}
@@ -50,28 +50,26 @@ func (l *gandiDNSUpdater) UpdateDNS(domain string, ip *ipprovider.ProvidedIP, tt
 	return nil
 }
 
-func (l *gandiDNSUpdater) update(domain string, ip *ipprovider.ProvidedIP, ttl int32) error {
+func (l *gandiDNSUpdater) update(domain string, recordName string, ip net.IP, ttl int32, version int) error {
 
 	domainRecords := domains.NewPutDomainsDomainRecordsRecordNameParams()
-	domainRecords.SetRecordName("@")
+	domainRecords.SetRecordName(recordName)
 	domainRecords.SetDomain(domain)
 	var records []*models.Record
-
-	if ip.GetIPV4() != nil {
+	switch {
+	case version == 4:
 		records = append(records, &models.Record{
-			RrsetName:   "@",
+			RrsetName:   recordName,
 			RrsetTTL:    ttl,
 			RrsetType:   "A",
-			RrsetValues: []string{ip.GetIPV4String()},
+			RrsetValues: []string{ip.String()},
 		})
-	}
-
-	if ip.GetIPV6() != nil {
+	case version == 6:
 		records = append(records, &models.Record{
-			RrsetName:   "@",
+			RrsetName:   recordName,
 			RrsetTTL:    ttl,
 			RrsetType:   "AAAA",
-			RrsetValues: []string{ip.GetIPV6String()},
+			RrsetValues: []string{ip.String()},
 		})
 	}
 
@@ -86,36 +84,20 @@ func (l *gandiDNSUpdater) update(domain string, ip *ipprovider.ProvidedIP, ttl i
 	return nil
 }
 
-func (l *gandiDNSUpdater) verifyIPV4(domain string, ip net.IP) error {
+func (l *gandiDNSUpdater) verifyIP(domain string, recordName string, ip net.IP, version int) error {
 	if ip == nil {
 		return nil
 	}
 
 	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
 	p.SetDomain(domain)
-	p.SetRecordName("@")
-	p.SetRecordType("A")
-
-	domainResp, err := l.gandiClient.Domains.GetDomainsDomainRecordsRecordNameRecordType(p, l.gandiAuth)
-
-	if err != nil {
-		return err
+	p.SetRecordName(recordName)
+	switch {
+	case version == 4:
+		p.SetRecordType("A")
+	case version == 6:
+		p.SetRecordType("AAAA")
 	}
-	if domainResp.Payload.RrsetValues[0] == ip.String() {
-		return nil
-	}
-	return nil
-}
-
-func (l *gandiDNSUpdater) verifyIPV6(domain string, ip net.IP) error {
-	if ip == nil {
-		return nil
-	}
-
-	p := domains.NewGetDomainsDomainRecordsRecordNameRecordTypeParams()
-	p.SetDomain(domain)
-	p.SetRecordName("@")
-	p.SetRecordType("AAAA")
 
 	domainResp, err := l.gandiClient.Domains.GetDomainsDomainRecordsRecordNameRecordType(p, l.gandiAuth)
 

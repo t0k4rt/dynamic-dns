@@ -24,12 +24,10 @@ func NewTomlConfig() TomlConfig {
 // refresh rate, default 1h
 // default_refresh_delay = "1h"
 // default_ttl = 300
-// restrict_ip_versions = ["v4", "v6"]
 
 type General struct {
 	DefaultRefreshDelay duration `toml:"default_refresh_delay"`
 	DefaultTTL          int      `toml:"default_ttl"`
-	IPVersions          []string `toml:"ip_versions"`
 	LogPath             string   `toml:"log_path"`
 	LogLevel            string   `toml:"log_level"`
 }
@@ -39,22 +37,23 @@ func newGeneral() General {
 	return General{
 		DefaultRefreshDelay: duration{d},
 		DefaultTTL:          300,
-		IPVersions:          []string{"v4", "v6"},
 		LogPath:             "/var/log/dynamicdns.log",
 		LogLevel:            "info",
 	}
 }
 
-// [[domain]]
-// name="domain2.fr"
-// ip_provider = "ip provider"
-// dns_updater = "domain2 dns provider"
-// # ttl =
-// # refresh_delay =
+// # [[domain]]
+// # name="subdomain.domain2.com"
+// # ip_provider = "livebox"
+// # dns_updater = "gandi"
+// # ttl=3000
+// # refresh_delay = 1h
+// # ip_version  = 4
 type Domain struct {
 	Name         string
-	IPProvider   cIPProvider  `toml:"ip_provider"`
-	DNSProvider  cDNSProvider `toml:"dns_updater"`
+	IPProvider   *cIPProvider  `toml:"ip_provider"`
+	DNSProvider  *cDNSProvider `toml:"dns_updater"`
+	IPVersion    int           `toml:"ip_version"`
 	TTL          int
 	RefreshDelay duration `toml:"refresh_delay"`
 }

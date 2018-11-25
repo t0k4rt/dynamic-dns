@@ -3,9 +3,6 @@
 default_refresh_delay = "1h" # format is number s,m,h (seconds, minutes, hours)
 # default ttl in dns
 default_ttl = 300
-# select which type of ip (v4, v6, both)
-# you wish to update
-ip_versions = ["v4", "v6"]
 ## logs 
 log_level = "info"
 log_path = "/var/log/dynamicdns.log" # can be file path or stdout"
@@ -14,6 +11,13 @@ log_path = "/var/log/dynamicdns.log" # can be file path or stdout"
 # name="domain1.com"
 # ip_provider = "livebox"
 # dns_updater = "gandi"
+# ip_version  = 4
+
+# [[domain]]
+# name="domain1.com"
+# ip_provider = "interface:en0"
+# dns_updater = "gandi"
+# ip_version  = 6
 
 # [[domain]]
 # name="domain2.com"
@@ -21,3 +25,16 @@ log_path = "/var/log/dynamicdns.log" # can be file path or stdout"
 # dns_updater = "gandi"
 # ttl=3000
 # refresh_delay = 1h
+
+# [[domain]]
+# name="subdomain.domain2.com"
+# ip_provider = "livebox"
+# dns_updater = "gandi"
+# ttl=3000
+# refresh_delay = 1h
+# ip_version  = 4
+
+# todo : implement tld check with https://godoc.org/golang.org/x/net/publicsuffix
+# todo : allow subdomains domains 
+
+
