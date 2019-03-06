@@ -17,7 +17,7 @@ cp ./etc/dynamicdns_env.conf /etc/dynamicdns/dynamicdns_env.conf
 chown -R www-data:www-data /etc/dynamicdns
 
 touch /var/log/dynamicdns.log
-chmod www-data:www-data /var/log/dynamicdns.log
+chown www-data:www-data /var/log/dynamicdns.log
 
 cp ./scripts/dynamicdns.service /etc/systemd/system/dynamicdns.service
 rm $filename
