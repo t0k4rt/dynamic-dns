@@ -8,6 +8,7 @@ import (
 	"github.com/t0k4rt/dynamic-dns/internal/dnsprovider"
 	"github.com/t0k4rt/dynamic-dns/internal/dnsprovider/gandi"
 	"github.com/t0k4rt/dynamic-dns/internal/ipprovider"
+	"github.com/t0k4rt/dynamic-dns/internal/ipprovider/ipify"
 	"github.com/t0k4rt/dynamic-dns/internal/ipprovider/livebox"
 	"github.com/t0k4rt/dynamic-dns/internal/ipprovider/netlink"
 )
@@ -20,6 +21,8 @@ func MakeIPProvider(s string) (ipprovider.IPProvider, error) {
 		return netlink.NewIPProvider(splitted[1])
 	case s == "livebox":
 		return livebox.NewIPProvider()
+	case s == "ipify":
+		return ipify.NewIPProvider()
 	default:
 		return nil, errors.New(fmt.Sprintf("Unknown IPProvider: \"%s\"", s))
 	}
