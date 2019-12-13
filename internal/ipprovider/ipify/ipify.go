@@ -1,8 +1,9 @@
 package ipify
 
 import (
+	"net"
+	"errors"
 	ipify "github.com/rdegges/go-ipify"
-	"github.com/t0k4rt/dynamic-dns/internal/ipprovider"
 )
 
 type ipifyProvider struct {
@@ -36,5 +37,5 @@ func (l *ipifyProvider) GetIPv4() (net.IP, error) {
 }
 
 func (l *ipifyProvider) GetIPv6() (net.IP, error) {
-	return errors.New("Ipify does not support ipv6")
+	return nil, errors.New("Ipify does not support ipv6")
 }
