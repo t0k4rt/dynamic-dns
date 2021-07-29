@@ -44,8 +44,6 @@ github.com/go-openapi/swag
 github.com/go-openapi/validate
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/jpillora/backoff v1.0.0
-github.com/jpillora/backoff
 # github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
 github.com/kr/logfmt
 # github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329
@@ -54,8 +52,6 @@ github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
 # github.com/mitchellh/mapstructure v1.1.2
 github.com/mitchellh/mapstructure
-# github.com/rdegges/go-ipify v0.0.0-20150526035502-2d94a6a86c40
-github.com/rdegges/go-ipify
 # github.com/spf13/cobra v0.0.3
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.3
