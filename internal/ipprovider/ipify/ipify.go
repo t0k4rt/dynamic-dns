@@ -39,7 +39,7 @@ func (l *ipifyProvider) GetIPv4() (net.IP, error) {
 		return nil, err
 	}
 
-	return net.ParseIP(ip), nil
+	return net.ParseIP(string(ip)), nil
 }
 
 func (l *ipifyProvider) GetIPv6() (net.IP, error) {
@@ -55,5 +55,5 @@ func (l *ipifyProvider) GetIPv6() (net.IP, error) {
 		return nil, err
 	}
 
-	return net.ParseIP(ip), nil
+	return net.ParseIP(string(ip)), nil
 }
