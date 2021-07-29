@@ -1,9 +1,9 @@
 package ipify
 
 import (
+	"io/ioutil"
 	"net"
-	"errors"
-	ipify "github.com/rdegges/go-ipify"
+	"net/http"
 )
 
 type ipifyProvider struct {
@@ -27,15 +27,33 @@ func (l *ipifyProvider) GetIP(version int) (net.IP, error) {
 }
 
 func (l *ipifyProvider) GetIPv4() (net.IP, error) {
-
-	ip, err := ipify.GetIp()
+	url := "https://api.ipify.org?format=text"
+	resp, err := http.Get(url)
+	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	return net.ParseIP(ip), nil
 
+	ip, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return net.ParseIP(string(ip)), nil
 }
 
 func (l *ipifyProvider) GetIPv6() (net.IP, error) {
-	return nil, errors.New("Ipify does not support ipv6")
+	url := "https://api64.ipify.org?format=text"
+	resp, err := http.Get(url)
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	ip, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return net.ParseIP(string(ip)), nil
 }
