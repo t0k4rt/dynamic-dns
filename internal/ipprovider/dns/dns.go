@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"net"
 	"os/exec"
+	"strings"
 )
 
 type dns struct {
@@ -30,7 +31,7 @@ func (l *dns) GetIP(version int) (net.IP, error) {
 }
 
 func (l *dns) GetIPv4() (net.IP, error) {
-	cmd := exec.Command("dig", "myip.opendns.com @resolver1.opendns.com", "-4")
+	cmd := exec.Command("dig", "+short", "myip.opendns.com", "@resolver1.opendns.com", "-4")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
@@ -38,12 +39,11 @@ func (l *dns) GetIPv4() (net.IP, error) {
 	if err != nil {
 		return nil, err
 	}
-	return net.ParseIP(out.String()), nil
-
+	return net.ParseIP(strings.TrimSpace(out.String())), nil
 }
 
 func (l *dns) GetIPv6() (net.IP, error) {
-	cmd := exec.Command("dig", "AAAA", "myip.opendns.com @resolver1.opendns.com")
+	cmd := exec.Command("dig", "+short", "AAAA", "myip.opendns.com", "@resolver1.opendns.com")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
@@ -51,5 +51,5 @@ func (l *dns) GetIPv6() (net.IP, error) {
 	if err != nil {
 		return nil, err
 	}
-	return net.ParseIP(out.String()), nil
+	return net.ParseIP(strings.TrimSpace(out.String())), nil
 }
