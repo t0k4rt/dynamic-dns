@@ -4,7 +4,7 @@ set -e
 VERSION=1.0.0
 OS=$(uname)
 ARCH=$(uname -m)
-USER=dynamicdns
+DYNUSER=dynamicdns
 
 
 while getopts ":v:" opt; do
@@ -26,11 +26,11 @@ done
 
 echo "Install DynamiycDNS version $VERSION"
 
-if id "$USER" &>/dev/null; then
+if id "$DYNUSER" &>/dev/null; then
   echo 'User already exists'
 else
   if [[ "$OS" == "Linux" ]]; then
-    useradd -r -s /bin/false "$USER"
+    useradd -r -s /bin/false "$DYNUSER"
   fi
 fi
 
@@ -48,10 +48,10 @@ mv dynamic-dns /usr/local/bin/
 mkdir -p /etc/dynamicdns
 curl -L "$DEFAULT_CONFIG_FILE_URL" -o /etc/dynamicdns/dynamicdns.toml
 curl -L "$DEFAULT_ENV_FILE_URL" -o /etc/dynamicdns/dynamicdns_env.conf
-chown -R "$USER:$USER" /etc/dynamicdns
+chown -R "$DYNUSER:$DYNUSER" /etc/dynamicdns
 
 touch /var/log/dynamicdns.log
-chown "$USER:$USER" /var/log/dynamicdns.log
+chown "$DYNUSER:$DYNUSER" /var/log/dynamicdns.log
 
 curl -L "$SERVICE_FILE_URL" -o /etc/systemd/system/dynamicdns.service
 
