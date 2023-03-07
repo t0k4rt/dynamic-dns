@@ -19,11 +19,9 @@ require (
 	github.com/go-openapi/validate v0.17.2 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/jpillora/backoff v1.0.0 // indirect
-	github.com/rdegges/go-ipify v0.0.0-20150526035502-2d94a6a86c40 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/t0k4rt/gandi-livedns-go v0.0.0-20181125174718-6d2ab11967f6
 	github.com/t0k4rt/livebox-go v0.0.0-20181114141331-a77904c61e8e
-	golang.org/x/net v0.0.0-20181114220301-adae6a3d119a
+	golang.org/x/net v0.7.0
 )

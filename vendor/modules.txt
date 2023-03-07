@@ -66,11 +66,11 @@ github.com/t0k4rt/gandi-livedns-go/models
 # github.com/t0k4rt/livebox-go v0.0.0-20181114141331-a77904c61e8e
 github.com/t0k4rt/livebox-go/client
 github.com/t0k4rt/livebox-go/client/ip_address
-# golang.org/x/net v0.0.0-20181114220301-adae6a3d119a
+# golang.org/x/net v0.7.0
 golang.org/x/net/context
 golang.org/x/net/idna
 golang.org/x/net/publicsuffix
-# golang.org/x/text v0.3.0
+# golang.org/x/text v0.7.0
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
